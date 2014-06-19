@@ -5,11 +5,10 @@ library(reshape2)
 ##Please set working directory to a valid path name on your console
 setwd("C:\\Users\\RA186032\\Documents\\Coursera\\Data Science Track\\3. Getting and Cleaning Data\\HW")
 
-##Create working ddir, Download data and unzip it
-if(!(file.exists("data")) {dir.create("data")}
-url <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
-download.file(url, destfile = ".//data//UCIHARDataset.zip")
-unzip(".//data//UCIHARDataset.zip")
+##Create working dir
+if(!file.exists("data")) {
+        dir.create("data")
+}
 
 ##Load Features.txt from file
 featureDF <- read.table(".\\data\\UCI HAR Dataset\\features.txt", nrows = 561, 
@@ -73,5 +72,8 @@ tempCombDataDF <- tempCombDataDF[, c(1, 2, relevantCols)]
 meltTempCombData <- melt(tempCombDataDF, id.vars= as.vector(names(tempCombDataDF)[1:2]))
 tidyData <- dcast(meltTempCombData, subject_ID + activity ~ variable, mean)
 
+##Rename column names of tidy dataset to reflect that they are now mean calculations
+newColNames <- sapply(colnames(tidyData)[3:length(colnames(tidyData))], paste, "- mean")
+colnames(tidyData) <- c("subject_ID", "activity", newColNames)
 ##Writing data to file
-write.csv(tidyData, ".//data//tidyData.csv")
+write.table(tidyData, ".//data//tidyData.txt")
