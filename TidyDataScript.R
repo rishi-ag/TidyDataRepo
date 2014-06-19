@@ -5,6 +5,12 @@ library(reshape2)
 ##Please set working directory to a valid path name on your console
 setwd("C:\\Users\\RA186032\\Documents\\Coursera\\Data Science Track\\3. Getting and Cleaning Data\\HW")
 
+##Create working ddir, Download data and unzip it
+if(!(file.exists("data")) {dir.create("data")}
+url <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
+download.file(url, destfile = ".//data//UCIHARDataset.zip")
+unzip(".//data//UCIHARDataset.zip")
+
 ##Load Features.txt from file
 featureDF <- read.table(".\\data\\UCI HAR Dataset\\features.txt", nrows = 561, 
                             col.names = c("ID", "Feature"))
@@ -25,7 +31,7 @@ activityNameDF <- read.table(".\\data\\UCI HAR Dataset\\activity_labels.txt",
         
         #Load test activity data and replace activity number by activity name
         testActivityDF <- read.table(".\\data\\UCI HAR Dataset\\test\\y_test.txt", col.names = "ID")
-        sql1 <- "select Activity from testActivityDF A join activityName B on A.ID = B.ID"
+        sql1 <- "select Activity from testActivityDF A join activityNameDF B on A.ID = B.ID"
         testActivityDF <- sqldf(sql1)
         
         #Merge feature vector
@@ -68,4 +74,4 @@ meltTempCombData <- melt(tempCombDataDF, id.vars= as.vector(names(tempCombDataDF
 tidyData <- dcast(meltTempCombData, subject_ID + activity ~ variable, mean)
 
 ##Writing data to file
-write.table(tidyData, ".//data//tidyData.txt")
+write.csv(tidyData, ".//data//tidyData.csv")
